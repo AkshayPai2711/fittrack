@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<style>
+body{
+background:#0f172a;
+color:white;
+font-family:Arial, sans-serif;
+}
+<style>
+.card{
+display:flex;
+justify-content:space-between;
+align-items:center;
+background:#1e293b;
+padding:15px;
+margin-bottom:12px;
+border-radius:14px;
+box-shadow:0 4px 10px rgba(0,0,0,0.3);
+transition:0.2s;
+}
+
+<!--.card:hover{-->
+<!--transform:scale(1.02);-->
+<!--}-->
+
+.mutual{
+color:#94a3b8;
+font-size:12px;
+}
+
+/* Friend tag */
+.tag.friend{
+background:#22c55e;
+color:white;
+padding:2px 8px;
+border-radius:6px;
+font-size:11px;
+margin-top:4px;
+display:inline-block;
+}
+
+/* Buttons */
+.btn{
+border:none;
+padding:8px 14px;
+border-radius:10px;
+cursor:pointer;
+font-weight:600;
+min-width:110px;
+transition:0.2s;
+}
+
+/* Types */
+.btn.add{
+background:#22c55e;
+color:white;
+}
+.btn.add:hover{
+background:#16a34a;
+}
+
+.btn.view{
+background:#3b82f6;
+color:white;
+}
+.btn.view:hover{
+background:#2563eb;
+}
+
+.btn.accept{
+background:#f59e0b;
+color:white;
+}
+.btn.chat{
+background:#06b6d4;
+color:white;
+}
+.btn.chat:hover{
+background:#0891b2;
+}
+.btn.accept:hover{
+background:#d97706;
+}
+
+.btn.disabled{
+background:#475569;
+color:white;
+cursor:not-allowed;
+}
+
+</style>
+
+<h2>People You May Know</h2>
+
+{% for item in users %}
+
+<div class="card">
+
+    <!-- LEFT SIDE (user info) -->
+    <div>
+        <b>{{ item.user.username }}</b><br>
+
+        {% if item.mutual > 0 %}
+            <span class="mutual">{{ item.mutual }} mutual friends</span>
+        {% else %}
+            <span class="mutual">No mutual friends</span>
+        {% endif %}
+
+        {% if item.status == "friends" %}
+            <div class="tag friend">✔ Friend</div>
+        {% endif %}
+    </div>
+
+    <!-- RIGHT SIDE (buttons) -->
+  <div style="display:flex; gap:8px; align-items:center;">
+
+    <!-- ALWAYS show View Profile -->
+    <a href="{% url 'view_profile' item.user.id %}">
+        <button class="btn view">View Profile</button>
+    </a>
+
+    {% if item.status == "friends" %}
+        <!-- Extra Chat button -->
+        <a href="{% url 'chat' item.user.id %}">
+            <button class="btn chat">Chat</button>
+        </a>
+
+    {% elif item.status == "sent" %}
+        <button class="btn disabled" disabled>Request Sent</button>
+
+    {% elif item.status == "received" %}
+        <a href="{% url 'accept_request' item.req_id %}">
+            <button class="btn accept">Accept</button>
+        </a>
+
+    {% else %}
+        <a href="{% url 'send_request' item.user.id %}">
+            <button class="btn add">Add Friend</button>
+        </a>
+    {% endif %}
+
+</div>
+
+{% endfor %}
+
+{% endblock %}

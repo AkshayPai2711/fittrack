@@ -1,0 +1,293 @@
+{% extends "base.html" %}
+{% block content %}
+
+<title>DigiBook</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI';
+    background: #0f172a;
+    color: white;
+}
+
+/* HEADER */
+.header {
+    text-align: center;
+    padding: 15px;
+    font-size: 1.6rem;
+    font-weight: bold;
+}
+
+/* STATS */
+.stats {
+    text-align: center;
+    margin: 10px 0 15px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #22c55e;
+}
+
+/* CALENDAR */
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    padding: 10px;
+    max-width: 500px;
+    margin: auto;
+}
+
+.day {
+    aspect-ratio: 1/1;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    background: rgba(255,255,255,0.05);
+    transition: 0.2s;
+}
+
+.day:hover {
+    transform: scale(1.05);
+}
+
+.checked {
+    background: linear-gradient(135deg, #22c55e, #4ade80);
+    color: black;
+}
+
+/* BOOK PAGE */
+.book-page {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #f8fafc;
+    color: black;
+    display: none;
+    flex-direction: column;
+    padding: 15px;
+}
+
+/* TOP BAR */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.back-btn {
+    background: #0f172a;
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+/* TEXTAREA */
+textarea {
+    margin-top: 15px;
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    background: transparent;
+}
+
+/* BUTTONS */
+.btn-row {
+    display: flex;
+    gap: 10px;
+}
+
+.save-btn, .toggle-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.save-btn {
+    background: #3b82f6;
+    color: white;
+}
+
+.toggle-btn {
+    background: #ef4444;
+    color: white;
+}
+</style>
+
+<div id="main">
+    <div class="header">📖 DigiBook</div>
+
+    <div class="stats">
+        🔥 Streak: <span id="streak">0</span> |
+        📊 Attendance: <span id="percent">0</span>%
+    </div>
+
+    <div class="calendar" id="calendar"></div>
+</div>
+
+<!-- BOOK -->
+<div id="bookPage" class="book-page">
+    <div class="top-bar">
+        <button class="back-btn" onclick="goBack()">← Back</button>
+        <h3 id="dateTitle"></h3>
+    </div>
+
+    <textarea id="note" placeholder="Write your workout..."></textarea>
+
+    <div class="btn-row">
+        <button class="save-btn" onclick="saveNote()">Save</button>
+        <button class="toggle-btn" onclick="toggleDay()">Toggle Day</button>
+    </div>
+</div>
+
+<script>
+let data = {};
+let selectedDate = "";
+
+/* LOAD DATA */
+async function loadData() {
+    try {
+        const res = await fetch("/get-entries/");
+        data = await res.json();
+
+        renderCalendar();
+        updateStats(); // 🔥 IMPORTANT
+    } catch (e) {
+        console.error("Error loading data:", e);
+    }
+}
+
+/* RENDER CALENDAR */
+function renderCalendar() {
+    const cal = document.getElementById("calendar");
+    cal.innerHTML = "";
+
+    for (let i = 1; i <= 30; i++) {
+        let key = `2026_03_${i}`;
+        let day = document.createElement("div");
+
+        day.className = "day";
+        day.innerText = i;
+
+        if (data[key]?.checked) {
+            day.classList.add("checked");
+        }
+
+        day.onclick = () => {
+            selectedDate = key;
+            openBook(i);
+        };
+
+        cal.appendChild(day);
+    }
+}
+
+/* OPEN BOOK */
+function openBook(day) {
+    document.getElementById("main").style.display = "none";
+    document.getElementById("bookPage").style.display = "flex";
+
+    document.getElementById("dateTitle").innerText = "Day " + day;
+    document.getElementById("note").value = data[selectedDate]?.note || "";
+}
+
+/* BACK */
+function goBack() {
+    document.getElementById("main").style.display = "block";
+    document.getElementById("bookPage").style.display = "none";
+}
+
+/* SAVE NOTE */
+async function saveNote() {
+    const note = document.getElementById("note").value;
+
+    await fetch("/save-entry/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCSRF()
+        },
+        body: JSON.stringify({
+            date: selectedDate,
+            note: note,
+            checked: true
+        })
+    });
+
+    await loadData();
+    goBack();
+}
+
+/* TOGGLE DAY */
+async function toggleDay() {
+    const current = data[selectedDate]?.checked || false;
+
+    await fetch("/save-entry/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCSRF()
+        },
+        body: JSON.stringify({
+            date: selectedDate,
+            note: data[selectedDate]?.note || "",
+            checked: !current
+        })
+    });
+
+    await loadData();
+    goBack();
+}
+
+/* STATS */
+function updateStats() {
+    let checkedDays = [];
+
+    for (let i = 1; i <= 30; i++) {
+        let key = `2026_03_${i}`;
+        if (data[key]?.checked) {
+            checkedDays.push(i);
+        }
+    }
+
+    // Attendance %
+    let percent = Math.round((checkedDays.length / 30) * 100);
+    document.getElementById("percent").innerText = percent;
+
+    // Streak
+    let streak = 0;
+    for (let i = 30; i >= 1; i--) {
+        let key = `2026_03_${i}`;
+        if (data[key]?.checked) streak++;
+        else break;
+    }
+
+    document.getElementById("streak").innerText = streak;
+}
+
+/* CSRF */
+function getCSRF() {
+    let cookieValue = null;
+    document.cookie.split(';').forEach(c => {
+        if (c.trim().startsWith('csrftoken=')) {
+            cookieValue = c.split('=')[1];
+        }
+    });
+    return cookieValue;
+}
+
+/* INIT */
+loadData();
+</script>
+
+
+{% endblock %}

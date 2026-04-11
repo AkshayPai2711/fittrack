@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block content %}
+
+<title>FitTrack – Exercise Videos</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #0f172a;
+    color: white;
+}
+
+/* Header */
+.header {
+    text-align: center;
+    padding: 20px;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+/* Grid Layout */
+.video-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    padding: 20px;
+}
+
+/* Card */
+.card {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 15px;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: scale(1.03);
+}
+
+/* Video */
+.card iframe {
+    width: 100%;
+    height: 200px;
+    border: none;
+}
+
+/* Title */
+.card h3 {
+    padding: 15px;
+    font-size: 1.1rem;
+}
+</style>
+
+<div class="header">🎥 Exercise Videos</div>
+
+<div class="video-container">
+
+    <!-- Video 1 -->
+    <div class="card">
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/UIPvIYsjfpo?si=huEgkhEsBtCZBRp4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <h3>Full Body Workout</h3>
+    </div>
+
+    <!-- Video 2 -->
+    <div class="card">
+       <iframe width="560" height="315" src="https://www.youtube.com/embed/Z88Rl5bpnmI?si=VK3-asRftWPG8_H3" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <h3>Push-Up Proper Form</h3>
+    </div>
+
+    <!-- Video 3 -->
+    <div class="card">
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/8PwoytUU06g?si=8-k_Ma1C5K_D8TBs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <h3>Abs Workout</h3>
+    </div>
+
+    <!-- Video 4 -->
+    <div class="card">
+       <iframe width="560" height="315" src="https://www.youtube.com/embed/X0xt0fYTZv8?si=m6LVzk2J5SF71i7b" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <h3>Leg Day Workout</h3>
+    </div>
+
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,23 @@
+{% for f in friends %}
+
+<div style="padding:10px; background:#111; margin:10px; border-radius:10px;">
+
+{% if f.sender == request.user %}
+    <b>{{ f.receiver.username }}</b>
+
+    <a href="{% url 'chat' f.receiver.id %}">
+        <button>Chat</button>
+    </a>
+
+{% else %}
+    <b>{{ f.sender.username }}</b>
+
+    <a href="{% url 'chat' f.sender.id %}">
+        <button>Chat</button>
+    </a>
+
+{% endif %}
+
+</div>
+
+{% endfor %}

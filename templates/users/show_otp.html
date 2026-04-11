@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>FitTrack – OTP Verification</title>
+
+<style>
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}
+
+body{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(135deg,#0f172a,#020617);
+color:white;
+}
+
+.container{
+width:100%;
+max-width:420px;
+padding:20px;
+}
+
+.card{
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(15px);
+border-radius:20px;
+padding:35px 30px;
+box-shadow:0 20px 40px rgba(0,0,0,0.6);
+border:1px solid rgba(255,255,255,0.08);
+}
+
+.logo{text-align:center;margin-bottom:20px;}
+
+.logo span{color:#22c55e;}
+
+.subtitle{text-align:center;color:#94a3b8;margin-bottom:20px;}
+
+.otp-display{
+text-align:center;
+margin-bottom:25px;
+padding:15px;
+border-radius:12px;
+background:rgba(255,255,255,0.03);
+border:1px solid rgba(255,255,255,0.08);
+}
+
+.otp-display p{
+color:#94a3b8;
+margin-bottom:8px;
+}
+
+.otp-number{
+font-size:28px;
+letter-spacing:6px;
+color:#22c55e;
+font-weight:700;
+}
+
+.input-field{
+width:100%;
+padding:14px;
+border-radius:12px;
+border:1px solid rgba(255,255,255,0.08);
+background:rgba(255,255,255,0.03);
+color:white;
+margin-bottom:20px;
+}
+
+.btn{
+width:100%;
+padding:14px;
+border-radius:12px;
+border:none;
+background:#22c55e;
+color:#020617;
+font-weight:600;
+cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<div class="card">
+
+<div class="logo">
+<h1>Fit<span>Track</span></h1>
+</div>
+
+<p class="subtitle">Enter OTP to verify your account</p>
+
+
+{% if otp %}
+<div class="otp-display">
+
+<p>Your OTP</p>
+
+<div class="otp-number">
+{{ otp }}
+</div>
+
+</div>
+{% endif %}
+
+
+<form method="POST" action="{% url 'verify_otp' %}">
+{% csrf_token %}
+
+<input type="text" name="otp" class="input-field" placeholder="Enter OTP">
+
+<button class="btn">Verify OTP</button>
+
+</form>
+
+</div>
+</div>
+
+</body>
+</html>

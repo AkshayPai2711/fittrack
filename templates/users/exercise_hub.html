@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+
+/* Fix: remove full screen center (breaks navbar) */
+.container {
+    max-width: 1000px;
+    margin: auto;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+/* Heading */
+h1 {
+    margin-bottom: 30px;
+    font-size: 2.5rem;
+}
+
+/* Cards layout */
+.cards {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Card style */
+.card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 30px;
+    width: 280px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    transition: 0.3s;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    border-color: #22c55e;
+}
+
+.card p {
+    color: #94a3b8;
+}
+
+/* Button */
+.btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 30px;
+    background: #22c55e;
+    color: #020617;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.2s;
+}
+
+.btn:hover {
+    background: #16a34a;
+}
+
+</style>
+
+<div class="container">
+
+<h1>🏋️ Exercise Hub</h1>
+
+<div class="cards">
+
+<!-- AI Assistant -->
+<div class="card">
+    <h2>🤖 AI Assistant</h2>
+    <p>Get personalized workout plans, posture tips, and smart fitness advice powered by AI.</p>
+    <button class="btn" onclick="location.href='{% url 'ai_assistant' %}'">
+        Open Assistant
+    </button>
+</div>
+
+<!-- Exercise Videos -->
+<div class="card">
+    <h2>🎥 Exercise Videos</h2>
+    <p>Watch guided workout videos and learn correct form step by step.</p>
+    <button class="btn" onclick="location.href='{% url 'exercise_videos' %}'">
+        Watch Videos
+    </button>
+</div>
+
+</div>
+
+</div>
+
+{% endblock %}

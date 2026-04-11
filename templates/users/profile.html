@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+
+.profile-container{
+max-width:900px;
+margin:auto;
+}
+
+/* HEADER */
+.profile-header{
+display:flex;
+align-items:center;
+gap:30px;
+margin-bottom:30px;
+}
+
+.profile-pic{
+width:110px;
+height:110px;
+border-radius:50%;
+object-fit:cover;
+border:3px solid #22c55e;
+}
+
+.bio{
+color:#94a3b8;
+margin-top:8px;
+}
+
+/* BUTTONS */
+.btn{
+padding:8px 16px;
+border-radius:8px;
+border:none;
+background:#22c55e;
+color:#020617;
+font-weight:600;
+cursor:pointer;
+margin-right:10px;
+transition:0.2s;
+}
+
+.btn:hover{
+background:#16a34a;
+}
+
+/* GRID */
+.posts{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:10px;
+}
+
+.post{
+position:relative;
+cursor:pointer;
+}
+
+.post img, .post video{
+width:100%;
+height:220px;
+object-fit:cover;
+border-radius:8px;
+}
+
+/* MODAL */
+.modal{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.8);
+justify-content:center;
+align-items:center;
+z-index:999;
+}
+
+.modal-content{
+background:#020617;
+padding:20px;
+border-radius:10px;
+max-width:500px;
+width:90%;
+}
+
+.modal img, .modal video{
+width:100%;
+border-radius:10px;
+}
+
+.close{
+color:white;
+font-size:20px;
+cursor:pointer;
+float:right;
+}
+
+.caption{
+margin-top:10px;
+color:#cbd5f5;
+}
+
+</style>
+
+<div class="profile-container">
+
+<div class="profile-header">
+
+<img src="{{ profile.profile_pic.url }}" class="profile-pic">
+
+<div>
+<h2>{{ request.user.username }}</h2>
+<p class="bio">{{ profile.bio }}</p>
+
+<a href="{% url 'edit_profile' %}">
+<button class="btn">Edit</button>
+</a>
+
+<a href="{% url 'create_post' %}">
+<button class="btn">+ Post</button>
+</a>
+<a href="{% url 'send_request' user.id %}">
+<button class="btn">Add Friend</button>
+</a>
+</div>
+
+</div>
+
+<!-- POSTS GRID -->
+<div class="posts">
+
+{% for post in posts %}
+
+<div class="post" onclick="openPost('{{ post.id }}')">
+
+{% if post.image %}
+<img src="{{ post.image.url }}">
+{% endif %}
+
+{% if post.video %}
+<video>
+<source src="{{ post.video.url }}">
+</video>
+{% endif %}
+
+</div>
+
+{% endfor %}
+
+</div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+
+<div class="modal-content">
+
+<span class="close" onclick="closeModal()">✖</span>
+
+<div id="modalBody"></div>
+
+</div>
+
+</div>
+
+<script>
+
+function openPost(id){
+
+const posts = {
+{% for post in posts %}
+"{{ post.id }}": `
+    {% if post.image %}
+    <img src="{{ post.image.url }}">
+    {% endif %}
+    {% if post.video %}
+    <video controls>
+        <source src="{{ post.video.url }}">
+    </video>
+    {% endif %}
+    <div class="caption">{{ post.caption }}</div>
+`,
+{% endfor %}
+};
+
+document.getElementById("modalBody").innerHTML = posts[id];
+document.getElementById("modal").style.display = "flex";
+}
+
+function closeModal(){
+document.getElementById("modal").style.display = "none";
+}
+
+</script>
+
+{% endblock %}

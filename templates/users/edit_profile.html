@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+
+.container{
+max-width:500px;
+margin:auto;
+padding:30px;
+}
+
+.card{
+background:rgba(255,255,255,0.05);
+padding:25px;
+border-radius:15px;
+border:1px solid rgba(255,255,255,0.08);
+}
+
+h2{
+margin-bottom:15px;
+}
+
+input, textarea{
+width:100%;
+padding:10px;
+margin-bottom:15px;
+border-radius:10px;
+border:none;
+background:rgba(255,255,255,0.03);
+color:white;
+}
+
+textarea{
+resize:none;
+height:100px;
+}
+
+button{
+width:100%;
+padding:12px;
+border:none;
+border-radius:10px;
+background:#22c55e;
+color:#020617;
+font-weight:600;
+cursor:pointer;
+}
+
+button:hover{
+background:#16a34a;
+}
+
+</style>
+
+<div class="container">
+
+<div class="card">
+
+<h2>Edit Profile</h2>
+
+<form method="POST" enctype="multipart/form-data">
+{% csrf_token %}
+
+<label>Profile Picture</label>
+<input type="file" name="profile_pic">
+
+<label>Bio</label>
+<textarea name="bio" placeholder="Write something...">{{ profile.bio }}</textarea>
+
+<button type="submit">Save Changes</button>
+
+</form>
+
+</div>
+
+</div>
+
+{% endblock %}

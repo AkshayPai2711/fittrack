@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Messages</h2>
+
+{% for u in users %}
+
+<div style="padding:10px; margin:10px; background:#111; border-radius:10px;">
+
+<b>{{ u.username }}</b>
+
+<a href="{% url 'chat' u.id %}">
+<button>Open Chat</button>
+</a>
+
+</div>
+
+{% endfor %}
+
+{% endblock %}

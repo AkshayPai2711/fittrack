@@ -1,0 +1,283 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<title>FitTrack – Video Form Analyzer</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;}
+
+body{background:#020617;color:white;}
+
+.container{max-width:900px;margin:auto;padding:30px 20px;}
+
+h1 span{color:#22c55e;}
+
+.subtitle{color:#94a3b8;margin-bottom:25px;}
+
+.card{
+background:rgba(255,255,255,0.03);
+border:1px solid rgba(255,255,255,0.05);
+border-radius:16px;
+padding:20px;
+margin-bottom:20px;
+}
+
+/* BUTTONS */
+.upload-btn,.exercise-btn{
+padding:10px 18px;
+border-radius:10px;
+background:#22c55e;
+cursor:pointer;
+border:none;
+margin:5px;
+color:white;
+}
+
+.exercise-btn.active{
+background:#ef4444;
+}
+
+/* VIDEO */
+video{width:100%;border-radius:12px;margin-top:10px;}
+
+canvas{position:absolute;top:0;left:0;pointer-events:none;}
+
+.video-wrapper{position:relative;}
+
+.feedback{
+margin-top:15px;
+padding:15px;
+border-radius:10px;
+background:rgba(34,197,94,0.1);
+color:#22c55e;
+font-weight:500;
+}
+
+.bad{background:rgba(239,68,68,0.1);color:#ef4444;}
+</style>
+
+
+
+
+<div class="container">
+
+<h1>Fit<span>Track</span> Form Analyzer</h1>
+<p class="subtitle">Select exercise and upload video</p>
+
+<div class="card">
+
+<!-- 🔘 Exercise Selector -->
+<div>
+<button class="exercise-btn active" onclick="setExercise('pushup')">Push-up</button>
+<button class="exercise-btn" onclick="setExercise('squat')">Squat</button>
+<button class="exercise-btn" onclick="setExercise('bicep')">Bicep Curl</button>
+</div>
+
+<br>
+
+<label class="upload-btn">
+Choose Video
+<input type="file" id="videoUpload" accept="video/*" hidden>
+</label>
+
+<div class="video-wrapper">
+<video id="video" controls></video>
+<canvas id="canvas"></canvas>
+</div>
+
+<div class="feedback" id="feedback">Upload a video to analyze form</div>
+
+</div>
+
+</div>
+
+<script>
+
+let detector;
+let isBadPosture=false;
+let currentExercise="pushup";
+
+async function loadModel(){
+detector = await poseDetection.createDetector(
+poseDetection.SupportedModels.MoveNet,
+{ modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING }
+);
+}
+loadModel();
+
+/* 🔘 Exercise switch */
+function setExercise(type){
+currentExercise=type;
+
+document.querySelectorAll(".exercise-btn").forEach(btn=>btn.classList.remove("active"));
+event.target.classList.add("active");
+}
+
+/* Upload */
+
+document.getElementById("videoUpload").addEventListener("change",function(e){
+const file=e.target.files[0];
+const video=document.getElementById("video");
+
+video.src=URL.createObjectURL(file);
+
+video.onloadeddata=()=>startAnalysis();
+});
+
+/* Analysis */
+
+async function startAnalysis(){
+const video=document.getElementById("video");
+const canvas=document.getElementById("canvas");
+const ctx=canvas.getContext("2d");
+
+canvas.width=video.videoWidth;
+canvas.height=video.videoHeight;
+
+async function loop(){
+
+if(video.paused||video.ended){
+requestAnimationFrame(loop);
+return;
+}
+
+const poses=await detector.estimatePoses(video);
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+poses.forEach(pose=>{
+analyzeExercise(pose.keypoints);
+drawSkeleton(ctx,pose.keypoints);
+});
+
+requestAnimationFrame(loop);
+}
+
+video.play();
+loop();
+}
+
+/* Draw */
+
+function drawSkeleton(ctx,keypoints){
+
+const video=document.getElementById("video");
+
+const scaleX=video.clientWidth/video.videoWidth;
+const scaleY=video.clientHeight/video.videoHeight;
+
+ctx.lineWidth=4;
+
+const pairs=poseDetection.util.getAdjacentPairs(poseDetection.SupportedModels.MoveNet);
+
+pairs.forEach(([i,j])=>{
+const kp1=keypoints[i];
+const kp2=keypoints[j];
+
+if(kp1.score>0.4 && kp2.score>0.4){
+
+ctx.strokeStyle=isBadPosture?"#22c55e":"#ef4444";
+
+ctx.beginPath();
+ctx.moveTo(kp1.x*scaleX,kp1.y*scaleY);
+ctx.lineTo(kp2.x*scaleX,kp2.y*scaleY);
+ctx.stroke();
+}
+});
+
+keypoints.forEach(kp=>{
+if(kp.score>0.4){
+
+ctx.fillStyle=isBadPosture?"#22c55e":"#ef4444";
+
+ctx.beginPath();
+ctx.arc(kp.x*scaleX,kp.y*scaleY,5,0,2*Math.PI);
+ctx.fill();
+}
+});
+}
+
+/* 🔥 MULTI-EXERCISE LOGIC */
+
+function analyzeExercise(kp){
+
+if(currentExercise==="pushup") analyzePushup(kp);
+else if(currentExercise==="squat") analyzeSquat(kp);
+else analyzeBicep(kp);
+
+}
+
+/* PUSHUP */
+function analyzePushup(kp){
+const shoulder=kp[6],hip=kp[12],elbow=kp[8];
+
+if(!shoulder||!hip||!elbow) return;
+
+if(Math.abs(shoulder.y-hip.y)>50){
+setBad("Keep your back straight!");
+}
+else if(Math.abs(elbow.y-shoulder.y)<30){
+setBad("Go lower!");
+}
+else{
+setGood("Good push-up form!");
+}
+}
+
+/* SQUAT */
+function analyzeSquat(kp){
+const hip=kp[12],knee=kp[14],ankle=kp[16];
+
+if(!hip||!knee||!ankle) return;
+
+if(knee.y < hip.y){
+setBad("Go lower in squat!");
+}
+else if(Math.abs(knee.x-ankle.x)>40){
+setBad("Keep knees aligned!");
+}
+else{
+setGood("Good squat!");
+}
+}
+
+/* BICEP CURL */
+function analyzeBicep(kp){
+const shoulder=kp[6],elbow=kp[8],wrist=kp[10];
+
+if(!shoulder||!elbow||!wrist) return;
+
+if(Math.abs(wrist.y-elbow.y)>40){
+setBad("Lift weight higher!");
+}
+else if(Math.abs(elbow.x-shoulder.x)>40){
+setBad("Keep elbow stable!");
+}
+else{
+setGood("Good curl!");
+}
+}
+
+/* Helpers */
+
+function setBad(msg){
+isBadPosture=true;
+const el=document.getElementById("feedback");
+el.innerText=msg;
+el.classList.add("bad");
+}
+
+function setGood(msg){
+isBadPosture=false;
+const el=document.getElementById("feedback");
+el.innerText=msg;
+el.classList.remove("bad");
+}
+
+</script>
+
+
+{% endblock %}

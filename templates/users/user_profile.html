@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>{{ profile_user.username }}</h2>
+
+<!-- Profile Photo -->
+<img src="{{ profile.image.url }}" width="150" height="150">
+
+<!-- Bio -->
+<p>{{ profile.bio }}</p>
+
+<!-- Buttons -->
+{% if is_friend %}
+<a href="{% url 'chat' profile_user.id %}">
+<button>Chat</button>
+</a>
+
+{% elif sent %}
+<button disabled>Request Sent</button>
+
+{% elif received %}
+<a href="{% url 'accept_request' profile_user.id %}">
+<button>Accept Request</button>
+</a>
+
+{% else %}
+<a href="{% url 'send_request' profile_user.id %}">
+<button>Add Friend</button>
+</a>
+{% endif %}
+
+<hr>
+
+<!-- Posts -->
+<h3>Posts</h3>
+
+{% for post in posts %}
+    <div>
+        <p>{{ post.caption }}</p>
+        {% if post.image %}
+            <img src="{{ post.image.url }}" width="300">
+        {% endif %}
+    </div>
+{% empty %}
+    <p>No posts yet.</p>
+{% endfor %}
+
+{% endblock %}

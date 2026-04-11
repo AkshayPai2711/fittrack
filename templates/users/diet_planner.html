@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FitTrack – Diet Planner</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+    background: #020617;
+    color: white;
+}
+
+.container {
+    max-width: 1000px;
+    margin: auto;
+    padding: 40px 20px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+h1 span { color: #22c55e; }
+
+.subtitle {
+    text-align: center;
+    color: #94a3b8;
+    margin-bottom: 30px;
+}
+
+.card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 18px;
+    padding: 25px;
+    margin-bottom: 25px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+}
+
+label {
+    font-size: 13px;
+    color: #cbd5f5;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    margin-top: 6px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.03);
+    color: white;
+    outline: none;
+}
+
+button {
+    margin-top: 20px;
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    background: #22c55e;
+    color: #020617;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+button:hover { background: #16a34a; }
+
+.meal {
+    margin-top: 10px;
+    padding: 10px;
+    background: rgba(34,197,94,0.08);
+    border-radius: 10px;
+}
+
+.meal strong { color: #22c55e; }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>Fit<span>Track</span> Diet Planner</h1>
+    <p class="subtitle">Personalized nutrition guidance</p>
+
+    <!-- FORM -->
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="card">
+            <div class="form-grid">
+
+                <div>
+                    <label>Age</label>
+                    <input type="number" name="age" required>
+                </div>
+
+                <div>
+                    <label>Gender</label>
+                    <select name="gender">
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Weight (kg)</label>
+                    <input type="number" name="weight" required>
+                </div>
+
+                <div>
+                    <label>Height (cm)</label>
+                    <input type="number" name="height" required>
+                </div>
+
+                <div>
+                    <label>Activity Level</label>
+                    <select name="activity">
+                        <option value="1.2">Sedentary</option>
+                        <option value="1.375">Lightly Active</option>
+                        <option value="1.55">Moderately Active</option>
+                        <option value="1.725">Very Active</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Goal</label>
+                    <select name="goal">
+                        <option value="cut">Fat Loss</option>
+                        <option value="maintain">Maintain</option>
+                        <option value="bulk">Build Muscle</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Diet Preference</label>
+                    <select name="preference">
+                        <option value="mixed">Mixed</option>
+                        <option value="veg">Vegetarian</option>
+                        <option value="nonveg">Non-Vegetarian</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Meals Per Day</label>
+                    <select name="meals">
+                        <option value="3">3 Meals</option>
+                        <option value="4">4 Meals</option>
+                        <option value="5">5 Meals</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <button type="submit">Generate Diet Plan</button>
+        </div>
+    </form>
+
+    <!-- OUTPUT -->
+    <div class="card">
+        <h2>Your Plan</h2>
+
+        {% if calories %}
+
+            <p><strong>Estimated Calories:</strong> {{ calories }} kcal/day</p>
+
+            {% for meal in meals %}
+            <div class="meal">
+                <strong>{{ meal.type }}:</strong> ~{{ meal.calories }} kcal
+                <br>🍽️ {{ meal.name }}
+            </div>
+            {% endfor %}
+
+            <br>
+            <h4>Tips:</h4>
+            <ul>
+                {% for tip in tips %}
+                <li>{{ tip }}</li>
+                {% endfor %}
+            </ul>
+
+            <h4>Avoid:</h4>
+            <ul>
+                {% for item in avoid %}
+                <li>{{ item }}</li>
+                {% endfor %}
+            </ul>
+
+        {% else %}
+            <p>Enter details to generate your diet.</p>
+        {% endif %}
+
+    </div>
+</div>
+
+</body>
+</html>

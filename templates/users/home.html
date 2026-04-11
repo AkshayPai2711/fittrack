@@ -1,0 +1,295 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+
+.hero{
+max-width:1100px;
+margin:auto;
+padding:70px 20px 40px;
+text-align:center;
+}
+
+.hero h1{
+font-size:36px;
+margin-bottom:15px;
+}
+
+.hero h1 span{
+color:#22c55e;
+}
+
+.hero p{
+color:#94a3b8;
+margin-bottom:25px;
+}
+
+.hero button{
+padding:14px 22px;
+border-radius:12px;
+border:none;
+background:#22c55e;
+color:#020617;
+font-weight:600;
+cursor:pointer;
+}
+
+/* FEATURES */
+
+.features{
+max-width:1100px;
+margin:auto;
+padding:40px 20px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:25px;
+}
+
+.card{
+background:rgba(255,255,255,0.03);
+border:1px solid rgba(255,255,255,0.05);
+border-radius:16px;
+overflow:hidden;
+transition:0.3s;
+}
+
+.card:hover{
+transform:translateY(-6px);
+border-color:#22c55e;
+}
+
+.card img{
+width:100%;
+height:160px;
+object-fit:cover;
+}
+
+.card-content{
+padding:20px;
+}
+
+.card h3{
+margin-bottom:8px;
+}
+
+.card p{
+font-size:13px;
+color:#94a3b8;
+}
+
+/* MOTIVATION */
+
+.motivation{
+margin-top:40px;
+background:linear-gradient(135deg,#020617,#0f172a);
+border-top:1px solid rgba(255,255,255,0.05);
+border-bottom:1px solid rgba(255,255,255,0.05);
+}
+
+.motivation-container{
+max-width:900px;
+margin:auto;
+padding:55px 20px;
+text-align:center;
+}
+
+.motivation p{
+color:#94a3b8;
+margin-bottom:20px;
+}
+
+.motivation button{
+padding:14px 26px;
+border-radius:12px;
+border:none;
+background:#22c55e;
+color:#020617;
+font-weight:600;
+}
+
+/* CONTACT */
+
+.contact{
+max-width:900px;
+margin:auto;
+padding:60px 20px;
+}
+
+.contact h2{
+text-align:center;
+margin-bottom:10px;
+}
+
+.contact p{
+text-align:center;
+color:#94a3b8;
+margin-bottom:30px;
+}
+
+.contact-form{
+display:grid;
+gap:15px;
+}
+
+.input-field{
+padding:14px;
+border-radius:12px;
+border:1px solid rgba(255,255,255,0.08);
+background:rgba(255,255,255,0.03);
+color:white;
+outline:none;
+}
+
+.input-field:focus{
+border-color:#22c55e;
+}
+
+textarea{
+resize:none;
+min-height:120px;
+}
+
+.contact button{
+padding:14px;
+border-radius:12px;
+border:none;
+background:#22c55e;
+color:#020617;
+font-weight:600;
+cursor:pointer;
+}
+
+/* FOOTER */
+
+footer{
+border-top:1px solid rgba(255,255,255,0.05);
+margin-top:30px;
+}
+
+.footer-container{
+max-width:1100px;
+margin:auto;
+padding:25px 20px;
+text-align:center;
+color:#64748b;
+font-size:13px;
+}
+
+</style>
+
+
+<section class="hero">
+    <h1>THIS IS HOME TEMPLATE</h1>
+<h1>Track Your Fitness.<br><span>Transform Your Body.</span></h1>
+<p>Your personal workout tracker, progress monitor, and fitness companion.</p>
+<button>Start Your Journey</button>
+</section>
+
+
+<section class="features">
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b">
+<div class="card-content">
+<h3>🏋️ Smart Workouts</h3>
+<p>Personalized workout routines based on your fitness level.</p>
+</div>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1554284126-aa88f22d8b74">
+<div class="card-content">
+<h3>🥗 Diet Plans</h3>
+<p>Healthy diet suggestions tailored to support your goals.</p>
+</div>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1552674605-db6ffd4facb5">
+<div class="card-content">
+<h3>📈 Progress Tracking</h3>
+<p>Track weight, calories, and strength improvements.</p>
+</div>
+</div>
+
+<div class="card">
+<img src="https://mensfitness.co.uk/wp-content/uploads/sites/2/2022/11/squat_1-min-min_compressed-1.jpg?w=799">
+<div class="card-content">
+<h3>⏱ Workout Timer</h3>
+<p>Integrated timers and rest trackers for workouts.</p>
+</div>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438">
+<div class="card-content">
+<h3>🔥 Goal Setting</h3>
+<p>Set fitness milestones and achieve them faster.</p>
+</div>
+</div>
+
+<div class="card">
+<img src="https://img.freepik.com/premium-photo/fit-friends-having-fun-gym_873069-5273.jpg">
+<div class="card-content">
+<h3>📈Socialize With Gym Buddies</h3>
+<p>Make Friends and chat over Workouts.</p>
+</div>
+</div>
+
+</section>
+
+
+<section class="motivation">
+<div class="motivation-container">
+
+<h2>Consistency beats intensity</h2>
+
+<p>
+FitTrack keeps you accountable, tracks progress,
+and helps build long-term fitness habits.
+</p>
+
+<button>Explore Workouts</button>
+
+</div>
+</section>
+
+
+<section class="contact">
+
+<h2>Contact Us</h2>
+
+<p>Have questions, feedback, or suggestions? We'd love to hear from you.</p>
+
+<form method="POST" action="{% url 'home' %}" class="contact-form">
+{% csrf_token %}
+{% csrf_token %}
+
+<input type="text" name="name" class="input-field" placeholder="Your Name" required>
+
+<input type="email" name="email" class="input-field" placeholder="Your Email" required>
+
+<textarea name="message" class="input-field" placeholder="Your Message" required></textarea>
+
+<button type="submit">Send Message</button>
+
+</form>
+{% if success %}
+<p style="color:#22c55e; text-align:center; margin-top:10px;">
+Message sent successfully ✅
+</p>
+{% endif %}
+
+</section>
+
+
+<footer>
+
+<div class="footer-container">
+© 2026 FitTrack • Built for stronger, healthier lives
+</div>
+
+</footer>
+
+{% endblock %}

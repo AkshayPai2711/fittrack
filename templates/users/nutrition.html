@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+
+.container{
+max-width:900px;
+margin:auto;
+padding:40px 20px;
+text-align:center;
+}
+
+h1{
+margin-bottom:10px;
+}
+
+h1 span{
+color:#22c55e;
+}
+
+.subtitle{
+color:#94a3b8;
+margin-bottom:40px;
+}
+
+/* CARD GRID */
+
+.card-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:25px;
+}
+
+/* CARD */
+
+.card{
+background:rgba(255,255,255,0.03);
+border:1px solid rgba(255,255,255,0.06);
+border-radius:16px;
+padding:35px 25px;
+cursor:pointer;
+transition:0.25s;
+}
+
+.card:hover{
+transform:translateY(-6px);
+border-color:#22c55e;
+}
+
+.icon{
+font-size:40px;
+margin-bottom:15px;
+}
+
+.card h2{
+margin-bottom:10px;
+font-size:20px;
+}
+
+.card p{
+font-size:14px;
+color:#94a3b8;
+margin-bottom:20px;
+}
+
+.btn{
+padding:10px 18px;
+border:none;
+border-radius:10px;
+background:#22c55e;
+color:#020617;
+font-weight:600;
+cursor:pointer;
+}
+
+/* FOOTER */
+
+footer{
+margin-top:50px;
+color:#64748b;
+font-size:13px;
+}
+
+</style>
+
+
+<div class="container">
+
+<h1>Fit<span>Track</span> Nutrition</h1>
+<p class="subtitle">Plan your meals and track calories for better results</p>
+
+<div class="card-grid">
+
+<div class="card" onclick="location.href='{% url 'diet_planner' %}'">
+
+<div class="icon">🥗</div>
+
+<h2>Custom Diet Plan</h2>
+
+<p>
+Generate a personalized diet plan based on your
+fitness goals, preferences, and daily calories.
+</p>
+
+<a href="{% url 'diet_planner' %}">
+<button class="btn">Create Diet Plan</button>
+</a>
+
+</div>
+
+
+<div class="card" onclick="location.href='{% url 'food_ai' %}'">
+
+<div class="icon">🔥</div>
+
+<h2>Calorie Counter</h2>
+
+<p>
+Track your daily calorie intake and understand
+how much energy you consume each day.
+</p>
+
+<button class="btn">Track Calories</button>
+
+</div>
+
+</div>
+
+<footer>
+© 2026 FitTrack • Smart nutrition for better fitness
+</footer>
+
+</div>
+
+{% endblock %}

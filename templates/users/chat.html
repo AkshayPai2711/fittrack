@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+.chat{
+max-width:600px;
+margin:auto;
+display:flex;
+flex-direction:column;
+height:80vh;
+}
+
+.messages{
+flex:1;
+overflow-y:auto;
+background:#0f172a;
+padding:15px;
+border-radius:10px;
+}
+
+.msg{
+margin:8px 0;
+padding:10px;
+border-radius:10px;
+max-width:70%;
+}
+
+.me{
+background:#22c55e;
+color:#020617;
+margin-left:auto;
+}
+
+.other{
+background:#1e293b;
+}
+
+.input{
+display:flex;
+gap:10px;
+margin-top:10px;
+}
+
+input{
+flex:1;
+padding:10px;
+border-radius:10px;
+border:none;
+}
+
+button{
+background:#22c55e;
+border:none;
+padding:10px;
+border-radius:10px;
+}
+</style>
+
+<h3>Chat with {{ other_user.username }}</h3>
+
+<div class="chat">
+
+<div id="messages" class="messages"></div>
+
+<form id="form" enctype="multipart/form-data">
+
+{% csrf_token %}
+
+<div class="input">
+<input type="text" name="text" placeholder="Message...">
+<input type="file" name="image">
+<button>Send</button>
+</div>
+
+</form>
+
+</div>
+
+<script>
+
+async function load(){
+
+const res = await fetch("?ajax=1");
+const data = await res.json();
+
+const box = document.getElementById("messages");
+box.innerHTML = "";
+
+data.messages.forEach(m => {
+
+let div = document.createElement("div");
+div.className = "msg " + (m.me ? "me" : "other");
+
+div.innerHTML = m.text || "";
+
+if(m.image){
+div.innerHTML += `<br><img src="${m.image}" width="120">`;
+}
+
+box.appendChild(div);
+});
+
+box.scrollTop = box.scrollHeight;
+}
+
+setInterval(load, 1500);
+
+// send
+document.getElementById("form").onsubmit = async e => {
+e.preventDefault();
+
+let fd = new FormData(e.target);
+
+await fetch("", {method:"POST", body:fd});
+e.target.reset();
+load();
+};
+
+load();
+
+</script>
+
+{% endblock %}
