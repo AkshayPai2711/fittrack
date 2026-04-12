@@ -188,7 +188,7 @@ Fit<span>Track</span>
 <!-- ✅ FIXED -->
 <a href="/chatapp/">AI Coach</a>
 
-<a href="#">Contact</a>
+<a href="{% url 'home' %}#contact">Contact</a>
 
 <!-- MOBILE AUTH -->
 {% if user.is_authenticated %}
@@ -206,20 +206,21 @@ Fit<span>Track</span>
 {% if user.is_authenticated %}
 
 <span class="user-text">
-Hello, {{ user.username }}
+<button class="nav-btn secondary">Hello, {{ user.username }}</button>
+<!--    Hello, {{ user.username }}-->
 </span>
 
-<a href="{% url 'profile' %}">
-<button class="nav-btn secondary">Profile</button>
-</a>
+<!--<a href="{% url 'profile' %}">-->
+<!--<button class="nav-btn secondary">Profile</button>-->
+<!--</a>-->
 
-<a href="/chatapp/">
-    <button class="nav-btn">AI Coach</button>
-</a>
+<!--<a href="/chatapp/">-->
+<!--    <button class="nav-btn">AI Coach</button>-->
+<!--</a>-->
 
-<a href="{% url 'logout' %}">
-<button class="nav-btn">Logout</button>
-</a>
+<!--<a href="{% url 'logout' %}">-->
+<!--<button class="nav-btn">Logout</button>-->
+<!--</a>-->
 
 {% else %}
 

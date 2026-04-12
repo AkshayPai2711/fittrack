@@ -180,10 +180,14 @@ font-size:13px;
 
 
 <section class="hero">
-    <h1>THIS IS HOME TEMPLATE</h1>
+
 <h1>Track Your Fitness.<br><span>Transform Your Body.</span></h1>
 <p>Your personal workout tracker, progress monitor, and fitness companion.</p>
+<a href="{% url 'exercise_hub' %}">
+
+
 <button>Start Your Journey</button>
+</a>
 </section>
 
 
@@ -250,13 +254,15 @@ FitTrack keeps you accountable, tracks progress,
 and helps build long-term fitness habits.
 </p>
 
-<button>Explore Workouts</button>
+<a href="{% url 'exercise_hub' %}">
+    <button>Explore Workouts</button>
+</a>
 
 </div>
 </section>
 
 
-<section class="contact">
+<section class="contact" id="contact">
 
 <h2>Contact Us</h2>
 
