@@ -249,21 +249,41 @@ def chat_inbox(request):
     return render(request, "users/chat_inbox.html", {"users": users})
 @login_required
 def user_profile(request, user_id):
+
     profile_user = User.objects.get(id=user_id)
     profile = Profile.objects.get(user=profile_user)
-    posts = Post.objects.filter(user=profile_user)
+    posts = Post.objects.filter(user=profile_user).order_by("-id")
 
-    is_friend = ...
-    sent = ...
-    received = ...
+    # already friends?
+    is_friend = FriendRequest.objects.filter(
+        accepted=True
+    ).filter(
+        (models.Q(sender=request.user, receiver=profile_user)) |
+        (models.Q(sender=profile_user, receiver=request.user))
+    ).exists()
 
-    return render(request, "users/profile.html", {
+    # request sent by current user
+    sent = FriendRequest.objects.filter(
+        sender=request.user,
+        receiver=profile_user,
+        accepted=False
+    ).exists()
+
+    # request received from viewed user
+    received_request = FriendRequest.objects.filter(
+        sender=profile_user,
+        receiver=request.user,
+        accepted=False
+    ).first()
+
+    return render(request, "users/user_profile.html", {
         "profile_user": profile_user,
         "profile": profile,
         "posts": posts,
         "is_friend": is_friend,
         "sent": sent,
-        "received": received
+        "received": bool(received_request),
+        "request_id": received_request.id if received_request else None,
     })
 @login_required
 def profile(request):
