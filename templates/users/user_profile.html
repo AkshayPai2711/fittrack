@@ -4,56 +4,54 @@
 <style>
 
 .profile-page{
-max-width:900px;
+max-width:950px;
 margin:auto;
-padding:20px;
+padding:25px;
 }
 
 /* HEADER */
 .profile-header{
 display:flex;
-align-items:center;
 gap:25px;
-padding:25px;
+align-items:center;
 background:rgba(255,255,255,0.03);
 border:1px solid rgba(255,255,255,0.06);
-border-radius:18px;
+border-radius:20px;
+padding:25px;
 margin-bottom:30px;
 }
 
-/* DP */
 .profile-pic{
 width:130px;
 height:130px;
 border-radius:50%;
 object-fit:cover;
 border:4px solid #22c55e;
-box-shadow:0 8px 20px rgba(0,0,0,0.35);
+box-shadow:0 8px 20px rgba(0,0,0,0.3);
 }
 
-/* INFO */
 .profile-info h2{
-font-size:28px;
+font-size:30px;
 margin-bottom:8px;
 }
 
 .profile-info p{
 color:#94a3b8;
 margin-bottom:18px;
-max-width:500px;
+max-width:520px;
 }
 
-/* BUTTONS */
+/* BUTTON */
 .btn{
 padding:10px 18px;
 border:none;
-border-radius:10px;
+border-radius:12px;
 background:#22c55e;
 color:#020617;
 font-weight:700;
 cursor:pointer;
-margin-right:10px;
 transition:0.2s;
+margin-right:10px;
 }
 
 .btn:hover{
@@ -61,29 +59,30 @@ background:#16a34a;
 transform:translateY(-2px);
 }
 
-.btn.gray{
+.gray{
 background:#334155;
 color:white;
 cursor:default;
 }
 
 .section-title{
-font-size:22px;
+font-size:24px;
 margin-bottom:18px;
 }
 
-/* POSTS GRID */
+/* GRID */
 .posts-grid{
 display:grid;
 grid-template-columns:repeat(3,1fr);
-gap:14px;
+gap:16px;
 }
 
 .post-card{
 background:rgba(255,255,255,0.03);
 border:1px solid rgba(255,255,255,0.05);
-border-radius:14px;
+border-radius:16px;
 overflow:hidden;
+cursor:pointer;
 transition:0.2s;
 }
 
@@ -92,9 +91,10 @@ transform:translateY(-4px);
 border-color:#22c55e;
 }
 
-.post-card img{
+.post-card img,
+.post-card video{
 width:100%;
-height:220px;
+height:240px;
 object-fit:cover;
 display:block;
 }
@@ -107,11 +107,58 @@ color:#cbd5e1;
 
 /* EMPTY */
 .empty-box{
-padding:30px;
+padding:35px;
 text-align:center;
 background:rgba(255,255,255,0.03);
-border-radius:14px;
+border-radius:16px;
 color:#94a3b8;
+}
+
+/* MODAL */
+.modal{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.75);
+z-index:999;
+justify-content:center;
+align-items:center;
+padding:20px;
+}
+
+.modal-content{
+max-width:850px;
+width:100%;
+background:#0f172a;
+border-radius:20px;
+overflow:hidden;
+border:1px solid rgba(255,255,255,0.08);
+}
+
+.modal-media img,
+.modal-media video{
+width:100%;
+max-height:75vh;
+object-fit:contain;
+background:black;
+}
+
+.modal-caption{
+padding:18px;
+font-size:15px;
+color:#e2e8f0;
+}
+
+.close-btn{
+position:absolute;
+top:20px;
+right:25px;
+font-size:34px;
+color:white;
+cursor:pointer;
 }
 
 /* MOBILE */
@@ -145,7 +192,6 @@ height:110px;
 <div class="profile-info">
 
 <h2>{{ profile_user.username }}</h2>
-
 <p>{{ profile.bio }}</p>
 
 {% if is_friend %}
@@ -168,7 +214,6 @@ height:110px;
 {% endif %}
 
 </div>
-
 </div>
 
 <!-- POSTS -->
@@ -178,14 +223,25 @@ height:110px;
 <div class="posts-grid">
 
 {% for post in posts %}
-<div class="post-card">
+<div class="post-card"
+onclick="openPost(
+'{% if post.image %}{{ post.image.url }}{% elif post.video %}{{ post.video.url }}{% endif %}',
+'{% if post.video %}video{% else %}image{% endif %}',
+`{{ post.caption|escapejs }}`
+)">
 
 {% if post.image %}
 <img src="{{ post.image.url }}">
 {% endif %}
 
+{% if post.video %}
+<video muted>
+<source src="{{ post.video.url }}">
+</video>
+{% endif %}
+
 <div class="caption">
-{{ post.caption }}
+{{ post.caption|truncatechars:40 }}
 </div>
 
 </div>
@@ -202,5 +258,152 @@ No posts yet.
 {% endif %}
 
 </div>
+
+<!-- MODAL -->
+<div class="modal" id="postModal">
+
+<span class="close-btn" onclick="closePost()">&times;</span>
+
+<div class="modal-content">
+
+<div class="modal-media" id="modalMedia"></div>
+
+<div class="modal-caption" id="modalCaption"></div>
+
+</div>
+
+</div>
+<script>
+
+function openPost(src,type,caption){
+
+const modal = document.getElementById("postModal");
+const media = document.getElementById("modalMedia");
+
+/* SIDE FLOATING CLOSE BUTTON (always visible) */
+const closeBtn = `
+<button
+onclick="closePost()"
+style="
+position:fixed;
+top:50%;
+right:25px;
+transform:translateY(-50%);
+z-index:10000;
+background:#ef4444;
+color:white;
+border:none;
+padding:14px 18px;
+border-radius:14px;
+font-weight:700;
+font-size:15px;
+cursor:pointer;
+box-shadow:0 10px 25px rgba(0,0,0,0.35);
+">
+✕ Close
+</button>
+`;
+
+if(type === "video"){
+
+media.innerHTML = `
+
+${closeBtn}
+
+<video
+id="popupVideo"
+controls
+autoplay
+playsinline
+style="
+width:100%;
+max-height:75vh;
+background:black;
+border-radius:16px;
+">
+<source src="${src}">
+</video>
+
+`;
+
+setTimeout(() => {
+
+const vid = document.getElementById("popupVideo");
+
+if(vid){
+vid.onended = function(){
+closePost();
+};
+}
+
+},100);
+
+}else{
+
+media.innerHTML = `
+
+${closeBtn}
+
+<img
+src="${src}"
+style="
+width:100%;
+max-height:75vh;
+object-fit:contain;
+border-radius:16px;
+">
+
+`;
+
+}
+
+document.getElementById("modalCaption").innerText = caption;
+
+modal.style.display = "flex";
+document.body.style.overflow = "hidden";
+
+}
+
+/* CLOSE */
+function closePost(){
+
+const modal = document.getElementById("postModal");
+const media = document.getElementById("modalMedia");
+
+const vid = document.getElementById("popupVideo");
+
+if(vid){
+vid.pause();
+vid.currentTime = 0;
+}
+
+media.innerHTML = "";
+
+modal.style.display = "none";
+document.body.style.overflow = "auto";
+
+}
+
+/* ESC */
+document.addEventListener("keydown",function(e){
+
+if(e.key === "Escape"){
+closePost();
+}
+
+});
+
+/* CLICK BACKGROUND */
+window.addEventListener("click",function(e){
+
+const modal = document.getElementById("postModal");
+
+if(e.target === modal){
+closePost();
+}
+
+});
+
+</script>
 
 {% endblock %}

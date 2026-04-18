@@ -7,9 +7,14 @@
 <style>
 
 .container{
-max-width:900px;
+max-width:950px;
 margin:auto;
 padding:40px 20px;
+}
+
+h1{
+margin-bottom:8px;
+font-size:34px;
 }
 
 h1 span{
@@ -19,110 +24,164 @@ color:#22c55e;
 .subtitle{
 color:#94a3b8;
 margin-bottom:25px;
+font-size:15px;
 }
 
+/* CARD */
 .card{
 background:rgba(255,255,255,0.03);
 border:1px solid rgba(255,255,255,0.05);
-border-radius:16px;
+border-radius:18px;
 padding:25px;
 margin-bottom:25px;
+backdrop-filter:blur(10px);
 }
 
-button{
+/* UPLOAD AREA */
+.upload-area{
+display:flex;
+gap:15px;
+flex-wrap:wrap;
+align-items:center;
+}
+
+.upload-btn,
+.camera-btn,
+#captureBtn,
+.use-btn{
 background:#22c55e;
-border:none;
-padding:10px 18px;
-border-radius:10px;
-font-weight:600;
-cursor:pointer;
 color:#020617;
-margin-top:10px;
+padding:12px 18px;
+border:none;
+border-radius:12px;
+font-weight:700;
+cursor:pointer;
+transition:0.2s;
+}
+
+.upload-btn:hover,
+.camera-btn:hover,
+#captureBtn:hover,
+.use-btn:hover{
+background:#16a34a;
+transform:translateY(-2px);
+}
+
+.camera-btn{
+background:#1e293b;
+color:white;
+border:1px solid rgba(255,255,255,0.08);
+}
+
+.camera-btn:hover{
+background:#334155;
+}
+
+#imageUpload{
+display:none;
+}
+
+/* MEDIA */
+#camera{
+display:none;
+margin-top:15px;
+border-radius:14px;
+width:100%;
+max-height:340px;
+object-fit:cover;
 }
 
 #preview{
 width:100%;
-max-height:300px;
+max-height:340px;
 object-fit:contain;
 margin-top:15px;
-border-radius:12px;
+border-radius:14px;
 display:none;
+background:#0f172a;
 }
 
+/* RESULTS */
 .result-grid{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
 gap:15px;
-margin-top:20px;
+margin-top:18px;
 }
 
 .result-box{
 background:rgba(255,255,255,0.03);
-border-radius:10px;
-padding:15px;
+border-radius:14px;
+padding:16px;
 text-align:center;
 }
 
 .result-box h3{
 font-size:14px;
 color:#94a3b8;
+margin-bottom:8px;
 }
 
 .result-box p{
 font-size:20px;
 color:#22c55e;
-font-weight:600;
-margin-top:5px;
+font-weight:700;
 }
 
 .loader{
-margin-top:10px;
+margin-top:12px;
 color:#94a3b8;
+font-size:14px;
 }
 
-select{
-padding:8px;
-margin-top:10px;
-border-radius:8px;
+/* MANUAL PICK */
+.manual-title{
+margin-bottom:8px;
+}
+
+.manual-subtitle{
+color:#94a3b8;
+font-size:14px;
+margin-bottom:18px;
+}
+
+.manual-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+gap:12px;
+}
+
+.food-btn{
+padding:12px;
 border:none;
-}
-.upload-area{
-display:flex;
-gap:15px;
-flex-wrap:wrap;
-margin-bottom:10px;
-}
-
-.upload-btn{
-background:#22c55e;
-color:#020617;
-padding:12px 20px;
-border-radius:10px;
+border-radius:12px;
+background:rgba(255,255,255,0.04);
+color:white;
 font-weight:600;
 cursor:pointer;
-display:inline-block;
 transition:0.2s;
+border:1px solid rgba(255,255,255,0.06);
 }
 
-.upload-btn:hover{
-background:#16a34a;
+.food-btn:hover{
+background:#22c55e;
+color:#020617;
+transform:translateY(-3px);
+box-shadow:0 8px 18px rgba(34,197,94,0.25);
 }
 
-.camera-btn{
-background:rgba(255,255,255,0.05);
-color:white;
-padding:12px 20px;
-border-radius:10px;
-border:1px solid rgba(255,255,255,0.1);
+.food-btn:active{
+transform:scale(0.97);
 }
 
-.camera-btn:hover{
-border-color:#22c55e;
+@media(max-width:768px){
+
+.manual-grid{
+grid-template-columns:repeat(2,1fr);
 }
 
-#imageUpload{
-display:none;
 }
+
 </style>
 
 <div class="container">
@@ -130,34 +189,35 @@ display:none;
 <h1>Fit<span>Track</span> Food AI</h1>
 <p class="subtitle">Upload or capture food to estimate calories & nutrition</p>
 
+<!-- Upload Card -->
 <div class="card">
 
 <div class="upload-area">
+
+<input type="file" id="imageUpload" accept="image/*">
 
 <label for="imageUpload" class="upload-btn">
 📷 Upload Food Photo
 </label>
 
-<input type="file" id="imageUpload" accept="image/*">
-
-<button onclick="openCamera()" class="camera-btn">
+<button type="button" onclick="openCamera()" class="camera-btn">
 🎥 Use Camera
+</button>
+
+<button type="button" onclick="capture()" id="captureBtn" style="display:none;">
+Capture Photo
 </button>
 
 </div>
 
-<video id="camera" width="100%" autoplay style="display:none;margin-top:15px;border-radius:12px;"></video>
-
-<button onclick="capture()" id="captureBtn" style="display:none">Capture Photo</button>
-
+<video id="camera" autoplay></video>
 <img id="preview">
 
 <div class="loader" id="loading"></div>
 
 </div>
 
-
-
+<!-- Results -->
 <div class="card">
 
 <h2>Nutrition Estimate</h2>
@@ -196,7 +256,43 @@ display:none;
 
 </div>
 
-<!--<button onclick="addLog()">Add To Daily Log</button>-->
+</div>
+
+<!-- Manual Selection -->
+<div class="card" id="manualCard" style="display:none;">
+
+<h2 class="manual-title">🍽 Food Not Recognized</h2>
+<p class="manual-subtitle">Choose the closest match to get nutrition details</p>
+
+<div class="manual-grid">
+
+<button class="food-btn" onclick="quickPick('pizza')">🍕 Pizza</button>
+<button class="food-btn" onclick="quickPick('burger')">🍔 Burger</button>
+<button class="food-btn" onclick="quickPick('rice')">🍚 Rice</button>
+<button class="food-btn" onclick="quickPick('biryani')">🍛 Biryani</button>
+<button class="food-btn" onclick="quickPick('dal')">🥣 Dal</button>
+<button class="food-btn" onclick="quickPick('rajma')">🫘 Rajma</button>
+
+<button class="food-btn" onclick="quickPick('paneer')">🧀 Paneer</button>
+<button class="food-btn" onclick="quickPick('roti')">🫓 Roti</button>
+<button class="food-btn" onclick="quickPick('dosa')">🥞 Dosa</button>
+<button class="food-btn" onclick="quickPick('idli')">⚪ Idli</button>
+<button class="food-btn" onclick="quickPick('poha')">🍲 Poha</button>
+<button class="food-btn" onclick="quickPick('upma')">🥣 Upma</button>
+
+<button class="food-btn" onclick="quickPick('salad')">🥗 Salad</button>
+<button class="food-btn" onclick="quickPick('banana')">🍌 Banana</button>
+<button class="food-btn" onclick="quickPick('apple')">🍎 Apple</button>
+<button class="food-btn" onclick="quickPick('orange')">🍊 Orange</button>
+<button class="food-btn" onclick="quickPick('cake')">🍰 Cake</button>
+<button class="food-btn" onclick="quickPick('pasta')">🍝 Pasta</button>
+
+<button class="food-btn" onclick="quickPick('egg')">🥚 Egg</button>
+<button class="food-btn" onclick="quickPick('omelette')">🍳 Omelette</button>
+<button class="food-btn" onclick="quickPick('chicken')">🍗 Chicken</button>
+<button class="food-btn" onclick="quickPick('fish')">🐟 Fish</button>
+
+</div>
 
 </div>
 
@@ -204,116 +300,242 @@ display:none;
 
 <script>
 
-let model;
+let model = null;
+let stream = null;
 
+/* Load Model */
 async function loadModel(){
+document.getElementById("loading").innerText = "Loading AI...";
 model = await mobilenet.load();
+document.getElementById("loading").innerText = "";
 }
-
 loadModel();
 
-const foodDB={
+/* Nutrition DB */
+const foodDB = {
 
 pizza:{cal:285,protein:12,carbs:36,fat:10},
 burger:{cal:295,protein:17,carbs:30,fat:12},
 sandwich:{cal:250,protein:14,carbs:30,fat:7},
-apple:{cal:95,protein:0.5,carbs:25,fat:0.3},
-banana:{cal:105,protein:1.3,carbs:27,fat:0.4},
-rice:{cal:206,protein:4,carbs:45,fat:0.5},
 salad:{cal:150,protein:5,carbs:12,fat:8},
+
+banana:{cal:105,protein:1.3,carbs:27,fat:0.4},
+apple:{cal:95,protein:0.5,carbs:25,fat:0.3},
+orange:{cal:62,protein:1,carbs:15,fat:0.2},
+
+rice:{cal:206,protein:4,carbs:45,fat:0.5},
+biryani:{cal:420,protein:18,carbs:52,fat:14},
+dal:{cal:180,protein:10,carbs:24,fat:3},
+rajma:{cal:230,protein:13,carbs:35,fat:2},
+paneer:{cal:265,protein:18,carbs:8,fat:18},
+roti:{cal:120,protein:3,carbs:22,fat:1},
+naan:{cal:310,protein:9,carbs:50,fat:7},
+dosa:{cal:170,protein:4,carbs:28,fat:4},
+idli:{cal:58,protein:2,carbs:12,fat:0.4},
+poha:{cal:250,protein:5,carbs:42,fat:5},
+upma:{cal:220,protein:5,carbs:35,fat:6},
+
 pasta:{cal:220,protein:8,carbs:42,fat:2},
-cake:{cal:350,protein:5,carbs:50,fat:15}
+cake:{cal:350,protein:5,carbs:50,fat:15},
+
+egg:{cal:78,protein:6,carbs:1,fat:5},
+omelette:{cal:154,protein:11,carbs:2,fat:11},
+chicken:{cal:239,protein:27,carbs:0,fat:14},
+fish:{cal:206,protein:22,carbs:0,fat:12}
 
 };
 
-document.getElementById("imageUpload").addEventListener("change",async function(e){
+/* Alias Map */
+const aliases = {
 
-const file=e.target.files[0];
+pizza:["pizza"],
+burger:["burger","hamburger","cheeseburger"],
+sandwich:["sandwich","sub","hotdog"],
 
-const img=document.getElementById("preview");
+banana:["banana"],
+apple:["apple"],
+orange:["orange","lemon","citrus"],
 
-img.src=URL.createObjectURL(file);
+salad:["salad","vegetable","broccoli","cabbage"],
 
-img.style.display="block";
+rice:["rice","plate","dish","bowl"],
+biryani:["pilaf","fried rice","rice bowl","biryani"],
 
-document.getElementById("loading").innerText="Analyzing food...";
+dal:["soup","lentil","gravy"],
+rajma:["beans","kidney bean","bean bowl"],
+paneer:["paneer","cheese cube","tofu"],
 
-await new Promise(r=>img.onload=r);
+roti:["flatbread","bread"],
+naan:["naan"],
+
+dosa:["crepe","pancake"],
+idli:["dumpling","bun"],
+
+poha:["flakes"],
+upma:["porridge"],
+
+pasta:["spaghetti","macaroni","noodle"],
+cake:["cake","dessert","bakery"],
+
+egg:["egg"],
+omelette:["omelet"],
+
+chicken:["chicken","meat","drumstick"],
+fish:["fish","seafood"]
+
+};
+
+/* Upload */
+document.getElementById("imageUpload").addEventListener("change", async function(e){
+
+const file = e.target.files[0];
+if(!file) return;
+
+const img = document.getElementById("preview");
+
+img.src = URL.createObjectURL(file);
+img.style.display = "block";
+
+document.getElementById("loading").innerText = "Analyzing food...";
+
+await new Promise(resolve => img.onload = resolve);
 
 analyze(img);
 
 });
 
+/* Analyze */
 async function analyze(img){
 
-const predictions=await model.classify(img);
+if(!model){
+document.getElementById("loading").innerText = "AI still loading...";
+return;
+}
 
-const food=predictions[0].className.split(",")[0].toLowerCase();
+const predictions = await model.classify(img,5);
 
-const confidence=(predictions[0].probability*100).toFixed(1)+"%";
+let top = predictions[0];
+let confidenceValue = top.probability;
+let confidence = (confidenceValue * 100).toFixed(1) + "%";
 
-document.getElementById("food").innerText=food;
-document.getElementById("confidence").innerText=confidence;
+let finalFood = "meal";
 
-let data={cal:200,protein:10,carbs:25,fat:8};
+for(let p of predictions){
 
-for(let key in foodDB){
+let guess = p.className.toLowerCase();
 
-if(food.includes(key)){
-data=foodDB[key];
+for(let food in aliases){
+
+for(let word of aliases[food]){
+
+if(guess.includes(word)){
+finalFood = food;
+break;
 }
 
 }
 
-document.getElementById("calories").innerText=data.cal+" kcal";
-document.getElementById("protein").innerText=data.protein+" g";
-document.getElementById("carbs").innerText=data.carbs+" g";
-document.getElementById("fat").innerText=data.fat+" g";
-document.getElementById("loading").innerText="";
+if(finalFood !== "meal") break;
+}
+
+if(finalFood !== "meal") break;
+}
+
+/* If low confidence */
+if(confidenceValue < 0.35 || finalFood === "meal"){
+
+document.getElementById("food").innerText = "Not Recognized";
+document.getElementById("confidence").innerText = confidence;
+document.getElementById("calories").innerText = "-";
+document.getElementById("protein").innerText = "-";
+document.getElementById("carbs").innerText = "-";
+document.getElementById("fat").innerText = "-";
+
+document.getElementById("manualCard").style.display = "block";
+
+document.getElementById("loading").innerText = "";
+return;
+}
+
+document.getElementById("manualCard").style.display = "none";
+
+showNutrition(finalFood, confidence);
+
+document.getElementById("loading").innerText = "";
 
 }
 
-let stream;
+/* Manual Pick */
+function quickPick(food){
 
+showNutrition(food, "Manual");
+document.getElementById("manualCard").style.display = "none";
+
+}
+
+/* Show Nutrition */
+function showNutrition(food, confidence){
+
+let data = foodDB[food] || {
+cal:220,
+protein:10,
+carbs:30,
+fat:8
+};
+
+document.getElementById("food").innerText = capitalize(food);
+document.getElementById("confidence").innerText = confidence;
+document.getElementById("calories").innerText = data.cal + " kcal";
+document.getElementById("protein").innerText = data.protein + " g";
+document.getElementById("carbs").innerText = data.carbs + " g";
+document.getElementById("fat").innerText = data.fat + " g";
+
+}
+
+/* Camera */
 async function openCamera(){
 
-const video=document.getElementById("camera");
+try{
 
-stream=await navigator.mediaDevices.getUserMedia({video:true});
+stream = await navigator.mediaDevices.getUserMedia({video:true});
 
-video.srcObject=stream;
+const video = document.getElementById("camera");
 
-video.style.display="block";
+video.srcObject = stream;
+video.style.display = "block";
 
-document.getElementById("captureBtn").style.display="inline-block";
+document.getElementById("captureBtn").style.display = "inline-block";
+
+}catch(err){
+alert("Camera unavailable");
+}
 
 }
 
+/* Capture */
 function capture(){
 
-const video=document.getElementById("camera");
+const video = document.getElementById("camera");
 
-const canvas=document.createElement("canvas");
+const canvas = document.createElement("canvas");
 
-canvas.width=video.videoWidth;
-canvas.height=video.videoHeight;
+canvas.width = video.videoWidth;
+canvas.height = video.videoHeight;
 
 canvas.getContext("2d").drawImage(video,0,0);
 
-const img=document.getElementById("preview");
+const img = document.getElementById("preview");
 
-img.src=canvas.toDataURL();
-
-img.style.display="block";
+img.src = canvas.toDataURL("image/png");
+img.style.display = "block";
 
 analyze(img);
 
 }
 
-function addLog(){
-
-alert("Food added to daily calorie log!");
-
+/* Helper */
+function capitalize(text){
+return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
 </script>
